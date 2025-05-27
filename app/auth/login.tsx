@@ -30,13 +30,13 @@ const LoginScreen = () => {
       // Save user data to context (which will also save to AsyncStorage)
       setUser(user);
 
-      Toast.show({
-        type: 'success',
-        text1: 'Login Successful',
+    Toast.show({
+      type: 'success',
+      text1: 'Login Successful',
         text2: `Welcome back, ${user.firstName}!`,
-        position: 'top',
-        visibilityTime: 2000,
-      });
+      position: 'top',
+      visibilityTime: 2000,
+    });
 
       router.replace('/home');
     } catch (error) {

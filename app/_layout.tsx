@@ -7,15 +7,15 @@ import { UserProvider } from '../contexts/UserContext';
 export default function RootLayout() {
   return (
     <UserProvider>
-      <SafeAreaProvider>
-        <StatusBar style="auto" />
-        <Stack
-          screenOptions={{
+    <SafeAreaProvider>
+      <StatusBar style="auto" />
+      <Stack
+        screenOptions={{
             headerShown: false,
-          }}
-        />
-        <Toast />
-      </SafeAreaProvider>
+        }}
+      />
+      <Toast />
+    </SafeAreaProvider>
     </UserProvider>
   );
 }

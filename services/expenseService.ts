@@ -1,28 +1,23 @@
 import { API_CONFIG } from './api/config';
 import { Expense, CreateExpenseData } from '../types/expense';
-
-
+import axios from 'axios';
 
 class ExpenseService {
   private baseUrl: string;
+  private api;
 
   constructor() {
     this.baseUrl = API_CONFIG.BASE_URL;
+    this.api = axios.create({
+      baseURL: this.baseUrl,
+      headers: API_CONFIG.HEADERS,
+    });
   }
 
   async createExpense(expenseData: CreateExpenseData): Promise<Expense> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses`, {
-        method: 'POST',
-        headers: API_CONFIG.HEADERS,
-        body: JSON.stringify(expenseData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create expense');
-      }
-
-      return await response.json();
+      const { data } = await this.api.post('/expenses', expenseData);
+      return data;
     } catch (error) {
       console.error('Create expense error:', error);
       throw error;
@@ -31,13 +26,8 @@ class ExpenseService {
 
   async getExpense(id: string): Promise<Expense> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses/${id}`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch expense');
-      }
-
-      return await response.json();
+      const { data } = await this.api.get(`/expenses/${id}`);
+      return data;
     } catch (error) {
       console.error('Get expense error:', error);
       throw error;
@@ -46,38 +36,22 @@ class ExpenseService {
 
   async getAllExpenses(userId: string): Promise<Expense[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses?userId=${userId}`);
-      console.log(userId);
-      
-
-      // If no expenses found (404), return empty array
-      if (response.status === 404) {
-        return [];
-      }
-
-      // For other error status codes, throw error
-      if (!response.ok) {
-        throw new Error('Failed to fetch expenses');
-      }
-
-      const data = await response.json();
+      const { data } = await this.api.get(`/expenses`, {
+        params: { userId }
+      });
       return Array.isArray(data) ? data : [];
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return [];
+      }
       console.error('Get all expenses error:', error);
-      // Return empty array on error instead of throwing
       return [];
     }
   }
 
   async deleteExpense(id: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete expense');
-      }
+      await this.api.delete(`/expenses/${id}`);
     } catch (error) {
       console.error('Delete expense error:', error);
       throw error;
@@ -86,15 +60,8 @@ class ExpenseService {
 
   async getExpenseById(expenseId: string): Promise<Expense> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses/${expenseId}`, {
-        headers: API_CONFIG.HEADERS,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch expense');
-      }
-
-      return await response.json();
+      const { data } = await this.api.get(`/expenses/${expenseId}`);
+      return data;
     } catch (error) {
       console.error('Error fetching expense:', error);
       throw error;
@@ -103,14 +70,7 @@ class ExpenseService {
 
   async deleteExpenseById(expenseId: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/expenses/${expenseId}`, {
-        method: 'DELETE',
-        headers: API_CONFIG.HEADERS,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete expense');
-      }
+      await this.api.delete(`/expenses/${expenseId}`);
     } catch (error) {
       console.error('Error deleting expense:', error);
       throw error;

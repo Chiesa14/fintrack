@@ -39,7 +39,7 @@ export default function ProfileScreen() {
   return (
     <ScrollView className="flex-1 bg-[#F9F9FF]">
       {/* Header */}
-      <View className="bg-primary-dark px-6 pt-12 pb-6">
+      <View className="bg-primary-dark px-6 pb-6 pt-12">
         <Text className="text-2xl font-bold text-white">Profile</Text>
         <Text className="text-white/80">Manage your account</Text>
       </View>
@@ -61,18 +61,18 @@ export default function ProfileScreen() {
         <View className="mt-8 space-y-6">
           <View className="rounded-xl bg-white p-6 shadow-sm">
             <Text className="mb-4 text-lg font-semibold text-gray-800">Account Details</Text>
-            
+
             <View className="space-y-4">
               <View>
                 <Text className="text-sm text-gray-500">First Name</Text>
                 <Text className="text-base text-gray-800">{user.firstName}</Text>
               </View>
-              
+
               <View>
                 <Text className="text-sm text-gray-500">Last Name</Text>
                 <Text className="text-base text-gray-800">{user.lastName}</Text>
               </View>
-              
+
               <View>
                 <Text className="text-sm text-gray-500">Email</Text>
                 <Text className="text-base text-gray-800">{user.username}</Text>
@@ -83,7 +83,7 @@ export default function ProfileScreen() {
           {/* App Settings */}
           <View className="rounded-xl bg-white p-6 shadow-sm">
             <Text className="mb-4 text-lg font-semibold text-gray-800">App Settings</Text>
-            
+
             <TouchableOpacity className="flex-row items-center justify-between py-2">
               <View className="flex-row items-center">
                 <FontAwesome name="bell" size={20} color="#4F46E5" />
@@ -110,14 +110,10 @@ export default function ProfileScreen() {
           </View>
 
           {/* Logout Button */}
-          <TouchableOpacity
-            onPress={handleLogout}
-            className="mt-4 rounded-xl bg-red-500 p-4">
+          <TouchableOpacity onPress={handleLogout} className="mt-4 rounded-xl bg-red-500 p-4">
             <View className="flex-row items-center justify-center">
               <FontAwesome name="sign-out" size={20} color="white" />
-              <Text className="ml-2 text-center text-lg font-semibold text-white">
-                Logout
-              </Text>
+              <Text className="ml-2 text-center text-lg font-semibold text-white">Logout</Text>
             </View>
           </TouchableOpacity>
         </View>
