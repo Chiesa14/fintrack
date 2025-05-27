@@ -163,7 +163,7 @@ export default function HomeScreen() {
               <Text className="text-gray-500">Loading...</Text>
             </View>
           ) : recentExpenses.length === 0 ? (
-            <View className="items-center justify-center py-8">
+            <View className="items-center justify-center  py-8">
               <FontAwesome name="history" size={48} color="#9CA3AF" />
               <Text className="mt-4 text-center text-gray-500">No recent activity</Text>
               <Text className="mt-2 text-center text-sm text-gray-400">
