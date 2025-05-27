@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
+import { Text, TouchableOpacity, GestureResponderEvent, ActivityIndicator } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { clsx } from 'clsx';
 
@@ -11,6 +11,8 @@ interface ButtonProps {
   iconSize?: number;
   className?: string;
   textClassName?: string;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -21,16 +23,25 @@ const Button: React.FC<ButtonProps> = ({
   iconSize = 20,
   className = '',
   textClassName = 'font-semibold text-center text-white',
+  disabled = false,
+  loading = false,
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`${className} flex-row items-center justify-center py-3 rounded-lg`}
-      >
-      {iconName && (
-        <FontAwesome name={iconName} size={iconSize} color={iconColor} className="mr-2" />
+      disabled={disabled || loading}
+      className={`${className} flex-row items-center justify-center py-3 rounded-lg ${disabled || loading ? 'opacity-70' : ''}`}
+    >
+      {loading ? (
+        <ActivityIndicator size="small" color={iconColor} />
+      ) : (
+        <>
+          {iconName && (
+            <FontAwesome name={iconName} size={iconSize} color={iconColor} className="mr-2" />
+          )}
+          <Text className={textClassName}>{title}</Text>
+        </>
       )}
-      <Text className={textClassName}>{title}</Text>
     </TouchableOpacity>
   );
 };

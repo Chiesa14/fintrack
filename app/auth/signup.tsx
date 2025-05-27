@@ -9,19 +9,22 @@ import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { userService, UserRegistrationData } from 'services/userService';
+import { useState } from 'react';
 
 const SignupScreen = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(signupSchema),
   });
 
   const onSubmit = async (data: UserRegistrationData) => {
+    setIsLoading(true);
     try {
       await userService.register(data);
       console.log(data);
@@ -38,6 +41,8 @@ const SignupScreen = () => {
         text1: 'Registration Failed',
         text2: 'Please try again later.',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,6 +117,8 @@ const SignupScreen = () => {
         title="Sign Up"
         onPress={handleSubmit(onSubmit)}
         className="rounded-lg bg-primary-dark py-4"
+        loading={isLoading}
+        disabled={isLoading}
       />
 
       <Text className="mt-6 text-center text-sm text-text">

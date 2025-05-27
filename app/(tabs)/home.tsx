@@ -48,6 +48,14 @@ export default function HomeScreen() {
 
   // Calculate financial overview
   const calculateFinancialOverview = () => {
+    if (!expenses || expenses.length === 0) {
+      return {
+        total: 0,
+        thisMonth: 0,
+        lastMonth: 0,
+      };
+    }
+
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -69,7 +77,6 @@ export default function HomeScreen() {
         return expenseDate.getMonth() === lastMonth && expenseDate.getFullYear() === lastMonthYear;
       })
       .reduce((sum, expense) => sum + expense.amount, 0);
-    console.log(totalExpenses, thisMonthExpenses, lastMonthExpenses);
 
     return {
       total: totalExpenses,
@@ -131,26 +138,34 @@ export default function HomeScreen() {
       <View className="px-6 py-6">
         <Text className="mb-4 text-lg font-semibold text-gray-800">Financial Overview</Text>
         <View className="rounded-xl bg-white p-6 shadow-sm">
-          <View className="mb-6">
-            <Text className="text-sm text-gray-500">Total Expenses</Text>
-            <Text className="text-2xl font-bold text-gray-800">
-              ${financialOverview.total.toFixed(2) ?? 0}
-            </Text>
-          </View>
-          <View className="flex-row justify-between">
-            <View>
-              <Text className="text-sm text-gray-500">This Month</Text>
-              <Text className="text-lg font-semibold text-gray-800">
-                ${financialOverview.thisMonth.toFixed(2) ?? 0}
-              </Text>
+          {loading ? (
+            <View className="items-center justify-center py-8">
+              <Text className="text-gray-500">Loading financial data...</Text>
             </View>
-            <View>
-              <Text className="text-sm text-gray-500">Last Month</Text>
-              <Text className="text-lg font-semibold text-gray-800">
-                ${financialOverview.lastMonth.toFixed(2) ?? 0}
-              </Text>
-            </View>
-          </View>
+          ) : (
+            <>
+              <View className="mb-6">
+                <Text className="text-sm text-gray-500">Total Expenses</Text>
+                <Text className="text-2xl font-bold text-gray-800">
+                  ${financialOverview.total.toFixed(2)}
+                </Text>
+              </View>
+              <View className="flex-row justify-between">
+                <View>
+                  <Text className="text-sm text-gray-500">This Month</Text>
+                  <Text className="text-lg font-semibold text-gray-800">
+                    ${financialOverview.thisMonth.toFixed(2)}
+                  </Text>
+                </View>
+                <View>
+                  <Text className="text-sm text-gray-500">Last Month</Text>
+                  <Text className="text-lg font-semibold text-gray-800">
+                    ${financialOverview.lastMonth.toFixed(2)}
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </View>
 

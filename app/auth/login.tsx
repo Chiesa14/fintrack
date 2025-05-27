@@ -8,35 +8,38 @@ import Button from 'components/Button';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { userService } from '../../services/userService';
+import { UserResponse, userService } from '../../services/userService';
 import { useUser } from '../../contexts/UserContext';
+import { useState } from 'react';
 
 const LoginScreen = () => {
   const router = useRouter();
   const { setUser } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
 
   const onSubmit = async (data: { username: string; password: string }) => {
+    setIsLoading(true);
     try {
       const user = await userService.login(data.username, data.password);
       
       // Save user data to context (which will also save to AsyncStorage)
-      setUser(user);
+      setUser(user as UserResponse);
 
-    Toast.show({
-      type: 'success',
-      text1: 'Login Successful',
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
         text2: `Welcome back, ${user.firstName}!`,
-      position: 'top',
-      visibilityTime: 2000,
-    });
+        position: 'top',
+        visibilityTime: 2000,
+      });
 
       router.replace('/home');
     } catch (error) {
@@ -46,6 +49,8 @@ const LoginScreen = () => {
         text2: error instanceof Error ? error.message : 'Please try again',
         position: 'top',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,11 +93,12 @@ const LoginScreen = () => {
         title="Log In"
         onPress={handleSubmit(onSubmit)}
         className="rounded-lg bg-primary-dark py-4"
-        disabled={isSubmitting}
+        loading={isLoading}
+        disabled={isLoading}
       />
 
       <Text className="mt-6 text-center text-sm text-text">
-        New to Quiz App?{' '}
+        New to Fin Track?{' '}
         <Text className="font-bold text-text" onPress={() => router.replace('/auth/signup')}>
           Signup
         </Text>
