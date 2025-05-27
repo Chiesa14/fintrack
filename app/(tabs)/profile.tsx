@@ -58,7 +58,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* User Details */}
-        <View className="mt-8 space-y-6">
+        <View className=" mt-8 space-y-6">
           <View className="rounded-xl bg-white p-6 shadow-sm">
             <Text className="mb-4 text-lg font-semibold text-gray-800">Account Details</Text>
 
@@ -81,7 +81,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* App Settings */}
-          <View className="rounded-xl bg-white p-6 shadow-sm">
+          <View className="mt-4 rounded-xl bg-white p-6 shadow-sm">
             <Text className="mb-4 text-lg font-semibold text-gray-800">App Settings</Text>
 
             <TouchableOpacity className="flex-row items-center justify-between py-2">
