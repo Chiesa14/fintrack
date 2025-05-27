@@ -7,6 +7,7 @@ import { expenseService } from '../../services/expenseService';
 import { Expense } from '../../types/expense';
 import { useUser } from '../../contexts/UserContext';
 import ExpenseFormModal from '../../components/ExpenseFormModal';
+import { EXPENSE_CATEGORIES, ExpenseCategory } from '../../utils/constants';
 
 export default function ExpensesScreen() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ExpensesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ExpenseCategory | 'all'>('all');
 
   const fetchExpenses = useCallback(async () => {
     if (!user) {
@@ -54,6 +56,11 @@ export default function ExpensesScreen() {
     router.push(`/expense/${expenseId}`);
   };
 
+  const filteredExpenses =
+    selectedCategory === 'all'
+      ? expenses
+      : expenses.filter((expense) => expense.category === selectedCategory);
+
   if (!user) {
     return (
       <View className="flex-1 items-center justify-center bg-[#F9F9FF]">
@@ -63,9 +70,8 @@ export default function ExpensesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F9F9FF]">
+    <View className="h-full bg-[#F9F9FF]">
       {/* Header */}
-
       <View className="flex flex-row items-center justify-between bg-primary-dark px-6 pb-6 pt-12">
         <View>
           <Text className="text-2xl font-bold text-white">My Expenses</Text>
@@ -74,35 +80,87 @@ export default function ExpensesScreen() {
         {/* Add Expense Button */}
         <TouchableOpacity
           onPress={handleAddExpense}
-          className="  h-10 w-10 rounded-full bg-white p-4 shadow-lg">
+          className="h-10 w-10 rounded-full bg-white p-4 shadow-lg">
           <FontAwesome name="plus" size={8} color="#4F46E5" className="m-auto" />
         </TouchableOpacity>
       </View>
 
+      {/* Category Filter */}
+      <View className="bg-white">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className=" py-2">
+          <TouchableOpacity
+            onPress={() => setSelectedCategory('all')}
+            className={` mx-1 rounded-full px-4 py-2 ${selectedCategory === 'all' ? 'bg-primary-dark' : 'bg-gray-100'}`}
+            style={{ height: 36 }}>
+            <Text
+              className={`font-medium ${
+                selectedCategory === 'all' ? 'text-white' : 'text-gray-600'
+              }`}>
+              All
+            </Text>
+          </TouchableOpacity>
+          {EXPENSE_CATEGORIES.map((category) => (
+            <TouchableOpacity
+              key={category.id}
+              onPress={() => setSelectedCategory(category.id)}
+              className={`mx-1 flex-row items-center rounded-full  px-4 py-2 ${selectedCategory === category.id ? 'bg-primary-dark' : 'bg-gray-100'}`}
+              style={{ height: 36 }}>
+              <FontAwesome
+                name={category.icon}
+                size={14}
+                color={selectedCategory === category.id ? 'white' : '#4B5563'}
+                className="mr-2"
+              />
+              <Text
+                className={`font-medium ${
+                  selectedCategory === category.id ? 'text-white' : 'text-gray-600'
+                }`}>
+                {category.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
       {/* Expenses List */}
       <ScrollView
         className="flex-1 px-6 pt-2"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {loading ? (
           <Text className="mt-4 text-center text-gray-500">Loading expenses...</Text>
-        ) : expenses.length === 0 ? (
+        ) : filteredExpenses.length === 0 ? (
           <View className="mt-8 items-center">
             <FontAwesome name="file-text-o" size={48} color="#9CA3AF" />
-            <Text className="mt-4 text-center text-gray-500">No expenses yet</Text>
+            <Text className="mt-4 text-center text-gray-500">No expenses found</Text>
             <Text className="mt-2 text-center text-gray-400">
-              Tap the + button to add your first expense
+              {selectedCategory === 'all'
+                ? 'Tap the + button to add your first expense'
+                : `No expenses in ${EXPENSE_CATEGORIES.find((c) => c.id === selectedCategory)?.label} category`}
             </Text>
           </View>
         ) : (
-          expenses.map((expense) => (
+          filteredExpenses.map((expense) => (
             <TouchableOpacity
               key={expense.id}
               onPress={() => handleExpensePress(expense.id)}
               className="mb-4 rounded-lg bg-white p-4 shadow-sm">
               <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="text-lg font-semibold text-gray-800">{expense.name}</Text>
-                  <Text className="text-sm text-gray-500">{expense.category}</Text>
+                <View className="flex-row items-center">
+                  <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary-light">
+                    <FontAwesome
+                      name={
+                        EXPENSE_CATEGORIES.find((c) => c.id === expense.category)?.icon || 'money'
+                      }
+                      size={16}
+                      color="#4F46E5"
+                    />
+                  </View>
+                  <View>
+                    <Text className="text-lg font-semibold text-gray-800">{expense.name}</Text>
+                    <Text className="text-sm text-gray-500">
+                      {EXPENSE_CATEGORIES.find((c) => c.id === expense.category)?.label ||
+                        expense.category}
+                    </Text>
+                  </View>
                 </View>
                 <Text className="text-lg font-bold text-primary-dark">
                   ${Number(expense.amount).toFixed(2)}

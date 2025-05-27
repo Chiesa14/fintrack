@@ -1,5 +1,4 @@
 import { API_CONFIG } from './api/config';
-import { hashPassword } from '../utils/encryption';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from 'types/user';
 import axios from 'axios';
@@ -38,13 +37,7 @@ class UserService {
 
   async register(userData: UserRegistrationData): Promise<User> {
     try {
-      const hashedPassword = await hashPassword(userData.password);
-
-      const { data } = await this.api.post('/users', {
-        ...userData,
-        password: hashedPassword,
-      });
-
+      const { data } = await this.api.post('/users', userData);
       const { password, ...userWithoutPassword } = data;
       await this.saveUser(userWithoutPassword);
       return userWithoutPassword;
@@ -66,9 +59,7 @@ class UserService {
         throw new Error('User not found');
       }
 
-      const hashedPassword = await hashPassword(password);
-      
-      if (user.password !== hashedPassword) {
+      if (user.password !== password) {
         throw new Error('Invalid password');
       }
 
