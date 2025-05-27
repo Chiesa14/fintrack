@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
@@ -64,7 +64,7 @@ export default function ExpenseDetailScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-[#F9F9FF]">
-        <Text className="text-lg text-gray-600">Loading...</Text>
+        <ActivityIndicator size="large" color="#4F46E5" />
       </View>
     );
   }

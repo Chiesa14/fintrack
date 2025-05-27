@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { useUser } from '../../contexts/UserContext';
@@ -140,7 +147,7 @@ export default function HomeScreen() {
         <View className="rounded-xl bg-white p-6 shadow-sm">
           {loading ? (
             <View className="items-center justify-center py-8">
-              <Text className="text-gray-500">Loading financial data...</Text>
+              <ActivityIndicator size="large" color="#4F46E5" />
             </View>
           ) : (
             <>
@@ -175,7 +182,7 @@ export default function HomeScreen() {
         <View className="rounded-xl bg-white p-6 shadow-sm">
           {loading ? (
             <View className="items-center justify-center py-8">
-              <Text className="text-gray-500">Loading...</Text>
+              <ActivityIndicator size="large" color="#4F46E5" />
             </View>
           ) : recentExpenses.length === 0 ? (
             <View className="items-center justify-center  py-8">
@@ -201,7 +208,7 @@ export default function HomeScreen() {
                       <Text className="text-sm text-gray-500">{expense.category}</Text>
                     </View>
                   </View>
-                  <View className="items-end">
+                  <View className="m-4 items-end">
                     <Text className="font-semibold text-gray-800">
                       ${expense.amount.toFixed(2)}
                     </Text>

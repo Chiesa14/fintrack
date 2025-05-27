@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
@@ -126,7 +126,9 @@ export default function ExpensesScreen() {
         className="flex-1 px-6 pt-2"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {loading ? (
-          <Text className="mt-4 text-center text-gray-500">Loading expenses...</Text>
+          <View className="mt-8 items-center justify-center">
+            <ActivityIndicator size="large" color="#4F46E5" />
+          </View>
         ) : filteredExpenses.length === 0 ? (
           <View className="mt-8 items-center">
             <FontAwesome name="file-text-o" size={48} color="#9CA3AF" />
