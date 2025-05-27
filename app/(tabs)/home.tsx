@@ -24,7 +24,7 @@ export default function HomeScreen() {
 
     try {
       const data = await expenseService.getAllExpenses(user.id);
-      setExpenses(data);
+      setExpenses(Array.isArray(data) ? data : []); // Ensure data is an array
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -55,20 +55,21 @@ export default function HomeScreen() {
     const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-    
+
     const thisMonthExpenses = expenses
-      .filter(expense => {
+      .filter((expense) => {
         const expenseDate = new Date(expense.date);
         return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
       })
       .reduce((sum, expense) => sum + expense.amount, 0);
 
     const lastMonthExpenses = expenses
-      .filter(expense => {
+      .filter((expense) => {
         const expenseDate = new Date(expense.date);
         return expenseDate.getMonth() === lastMonth && expenseDate.getFullYear() === lastMonthYear;
       })
       .reduce((sum, expense) => sum + expense.amount, 0);
+    console.log(totalExpenses, thisMonthExpenses, lastMonthExpenses);
 
     return {
       total: totalExpenses,
@@ -91,11 +92,11 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView 
+    <ScrollView
       className="flex-1 bg-[#F9F9FF]"
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       {/* Header */}
-      <View className="bg-primary-dark px-6 pt-12 pb-6">
+      <View className="bg-primary-dark px-6 pb-6 pt-12">
         <Text className="text-2xl font-bold text-white">Welcome back,</Text>
         <Text className="text-xl text-white/80">{user.firstName}!</Text>
       </View>
@@ -106,7 +107,7 @@ export default function HomeScreen() {
         <View className="flex-row flex-wrap gap-4">
           <TouchableOpacity
             onPress={() => setIsModalVisible(true)}
-            className="flex-1 min-w-[150px] rounded-xl bg-white p-4 shadow-sm">
+            className="min-w-[150px] flex-1 rounded-xl bg-white p-4 shadow-sm">
             <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-primary-light">
               <FontAwesome name="plus" size={20} color="#4F46E5" />
             </View>
@@ -116,7 +117,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             onPress={() => router.push('/expenses')}
-            className="flex-1 min-w-[150px] rounded-xl bg-white p-4 shadow-sm">
+            className="min-w-[150px] flex-1 rounded-xl bg-white p-4 shadow-sm">
             <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-green-100">
               <FontAwesome name="list" size={20} color="#059669" />
             </View>
@@ -133,20 +134,20 @@ export default function HomeScreen() {
           <View className="mb-6">
             <Text className="text-sm text-gray-500">Total Expenses</Text>
             <Text className="text-2xl font-bold text-gray-800">
-              ${financialOverview.total.toFixed(2)}
+              ${financialOverview.total.toFixed(2) ?? 0}
             </Text>
           </View>
           <View className="flex-row justify-between">
             <View>
               <Text className="text-sm text-gray-500">This Month</Text>
               <Text className="text-lg font-semibold text-gray-800">
-                ${financialOverview.thisMonth.toFixed(2)}
+                ${financialOverview.thisMonth.toFixed(2) ?? 0}
               </Text>
             </View>
             <View>
               <Text className="text-sm text-gray-500">Last Month</Text>
               <Text className="text-lg font-semibold text-gray-800">
-                ${financialOverview.lastMonth.toFixed(2)}
+                ${financialOverview.lastMonth.toFixed(2) ?? 0}
               </Text>
             </View>
           </View>
